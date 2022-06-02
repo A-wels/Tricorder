@@ -6,6 +6,10 @@
 #include <Adafruit_Sensor.h>
 #include <DHT_U.h>
 
+// Anzahld der Module
+#define NUMBER_OF_MODULES 2
+int current_task = 0;
+
 // Ultraschall
 #define TRIG_PIN 14
 #define ECHO_PIN 13
@@ -28,77 +32,42 @@ struct dht_results
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-void setup()
-{
-  // Serial Monitor
-  Serial.begin(9600);
-  Serial.println("Starting...");
+// Potentiometer
+#define POTENTIO_PIN 34
+int pot_val;
 
-  // Pins für Ultraschall
-  pinMode(TRIG_PIN, OUTPUT); // Setzt den vorher definierten trigPin als Output.
-  pinMode(ECHO_PIN, INPUT);  // Setzt den vorher defnierten echoPin als Input.
-
-  // Bildschirm
-  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
-  {
-    Serial.println(F("SSD1306 allocation failed"));
-    for (;;)
-      ; // Don't proceed, loop forever
-  }
-  display.clearDisplay();
-  display.display();
-  delay(100);
-
-  // Clear the buffer
-  display.clearDisplay();
-
-  // Draw a single pixel in white
-  display.drawPixel(10, 10, WHITE);
-
-  // Show the display buffer on the screen. You MUST call display() after
-  // drawing commands to make them visible on screen!
-  display.display();
-  delay(100);
-
-  // Temperatursensor starten
-  dht.begin();
-}
-
+// Temperatur messen. Wiederholt den Vorgang bis gültiges Messergebnis vorliegt.
 dht_results measure_temperature()
 {
-  float temperature;
-  float humidity;
-
+  float temperature = 0;
+  float humidity = 0;
   sensors_event_t event;
-  dht.temperature().getEvent(&event);
-  if (isnan(event.temperature))
+  while (temperature == 0.0 || humidity == 0.0)
   {
-    Serial.println(F("Fehler beim Messen der Temperatur"));
-  }
-  else
-  {
-    // Serial.print(F("Temperature: "));
-    // Serial.print(event.temperature);
-    // Serial.println(F("°C"));
-    temperature = event.temperature;
-  }
-  // Get humidity event and print its value.
-  dht.humidity().getEvent(&event);
-  if (isnan(event.relative_humidity))
-  {
-    Serial.println(F("Fehler beim lesen der Luftfeuchtigkeit"));
-  }
-  else
-  {
-    Serial.print(F("Luftfeuchtigkeit: "));
-    Serial.print(event.relative_humidity);
-    Serial.println(F("%"));
-    humidity = event.relative_humidity;
+    dht.temperature().getEvent(&event);
+    if (isnan(event.temperature))
+    {
+      Serial.println(F("Fehler beim Messen der Temperatur"));
+    }
+    else
+    {
+      temperature = event.temperature;
+    }
+
+    dht.humidity().getEvent(&event);
+    if (isnan(event.relative_humidity))
+    {
+      Serial.println(F("Fehler beim lesen der Luftfeuchtigkeit"));
+    }
+    else
+    {
+      humidity = event.relative_humidity;
+    }
   }
   return {temperature, humidity};
 }
 
+// Zeige Temperatur auf dem Display an
 void display_temperature(dht_results dht_measurement)
 {
   display.clearDisplay();
@@ -117,6 +86,8 @@ void display_temperature(dht_results dht_measurement)
   display.print("C");
   display.display();
 }
+
+// Zeige Luftfeuchtigkeit auf dem Bildschirm an
 void display_humidity(dht_results dht_measurement)
 {
   display.clearDisplay();
@@ -128,6 +99,8 @@ void display_humidity(dht_results dht_measurement)
   display.print("%");
   display.display();
 }
+
+// Miss die Distanz.
 float measure_distance()
 {
   digitalWrite(TRIG_PIN, HIGH);
@@ -137,6 +110,7 @@ float measure_distance()
   return 0.017 * duration_us;
 }
 
+// Misst die Distanz und zeigt die Distanz auf dem Bildschirm an. Messung wird wiederholt bis eine gültige vorliegt.
 void displayDistance()
 {
   display.clearDisplay();
@@ -154,15 +128,84 @@ void displayDistance()
   display.display();
 }
 
+// Task: Lese das Potentiometer dauerthaft aus. Wird in 2. Thread ausgeführt.
+void read_potentiometer(void *parameter)
+{
+
+  while (true)
+  {
+    pot_val = analogRead(POTENTIO_PIN);
+    pot_val = map(pot_val, 0, 4095, 0, NUMBER_OF_MODULES - 1); // Map auf die Anzahl der Module
+    delay(100);
+  }
+}
+
+// SETUP -------------------------------------------------
+
+void setup()
+{
+  // Serial Monitor
+  Serial.begin(9600);
+  Serial.println("Starting...");
+
+  // Pins für Ultraschall
+  pinMode(TRIG_PIN, OUTPUT); // Setzt den vorher definierten trigPin als Output.
+  pinMode(ECHO_PIN, INPUT);  // Setzt den vorher defnierten echoPin als Input.
+
+  // Pin für Potentiometer
+  pinMode(POTENTIO_PIN, INPUT);
+
+  // Task für Potentiometer polling
+  xTaskCreate(read_potentiometer, "Read Potentiometer", 1000, NULL, 1, NULL);
+
+  // Bildschirm starten
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
+  {
+    Serial.println(F("SSD1306 allocation failed"));
+    for (;;)
+      ; // Don't proceed, loop forever
+  }
+
+  // Temperatursensor starten
+  dht.begin();
+}
+
+// Wartet ungefähr für die angegebene Dauer. Wird vorzeitig abgebrochen, wenn pot_val sich verändert.
+void wait_interruptable(int duration)
+{
+  int time_start = millis();
+  int pot_at_start = pot_val;
+  while (millis() - time_start < duration && pot_val == pot_at_start)
+  {
+    delay(100);
+  }
+  return;
+}
+
 void loop()
 {
-  Serial.println("Measuring...");
-  dht_results dht_measurement = measure_temperature();
-  display_temperature(dht_measurement);
-  Serial.println(dht_measurement.temperature);
-  delay(2000);
-  display_humidity(dht_measurement);
-  delay(2000);
-  displayDistance();
-  delay(2000);
+  switch (pot_val)
+  {
+    // Case 0: Thermometer
+  case 0:
+  {
+    dht_results dht_measurement = measure_temperature();
+    display_temperature(dht_measurement);
+    wait_interruptable(2000);
+    if (pot_val != 0)
+    {
+      break;
+    }
+    display_humidity(dht_measurement);
+    wait_interruptable(2000);
+    break;
+  }
+    // Case 1: Ultraschall
+  case 1:
+  {
+    displayDistance();
+    wait_interruptable(2000);
+    break;
+  }
+  }
 }
