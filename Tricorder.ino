@@ -7,11 +7,11 @@
 #include <DHT_U.h>
 
 // Ultraschall
-#define TRIG_PIN 7
-#define ECHO_PIN 8
+#define TRIG_PIN 14
+#define ECHO_PIN 13
 
 // DHT11
-#define DHT_PIN 2
+#define DHT_PIN 4
 #define DHTTYPE DHT11 // DHT 11
 DHT_Unified dht(DHT_PIN, DHTTYPE);
 struct dht_results
@@ -21,22 +21,45 @@ struct dht_results
 };
 
 // Display
-#define OLED_RESET 4
-Adafruit_SSD1306 display(OLED_RESET);
+#define OLED_RESET -1
+
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 void setup()
 {
+  // Serial Monitor
+  Serial.begin(9600);
+  Serial.println("Starting...");
+
   // Pins für Ultraschall
   pinMode(TRIG_PIN, OUTPUT); // Setzt den vorher definierten trigPin als Output.
   pinMode(ECHO_PIN, INPUT);  // Setzt den vorher defnierten echoPin als Input.
 
   // Bildschirm
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
+  {
+    Serial.println(F("SSD1306 allocation failed"));
+    for (;;)
+      ; // Don't proceed, loop forever
+  }
+  display.clearDisplay();
+  display.display();
+  delay(100);
+
+  // Clear the buffer
   display.clearDisplay();
 
-  // Serial Monitor
-  Serial.begin(9600);
-  Serial.println("Starting...");
+  // Draw a single pixel in white
+  display.drawPixel(10, 10, WHITE);
+
+  // Show the display buffer on the screen. You MUST call display() after
+  // drawing commands to make them visible on screen!
+  display.display();
+  delay(100);
 
   // Temperatursensor starten
   dht.begin();
@@ -68,9 +91,9 @@ dht_results measure_temperature()
   }
   else
   {
-    // Serial.print(F("Luftfeuchtigkeit: "));
-    // Serial.print(event.relative_humidity);
-    // Serial.println(F("%"));
+    Serial.print(F("Luftfeuchtigkeit: "));
+    Serial.print(event.relative_humidity);
+    Serial.println(F("%"));
     humidity = event.relative_humidity;
   }
   return {temperature, humidity};
