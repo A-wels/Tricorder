@@ -1,3 +1,4 @@
 # Tricorder
 
-Star Trek like tricorder build with Arduino/ESP32
+Star Trek like tricorder build with an ESP32.
+This is still very WIP
