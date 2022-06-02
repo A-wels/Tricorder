@@ -14,9 +14,9 @@ int current_task = 0;
 #define TRIG_PIN 14
 #define ECHO_PIN 13
 
-// DHT11
+// DHT22
 #define DHT_PIN 4
-#define DHTTYPE DHT11 // DHT 11
+#define DHTTYPE DHT22 // DHT 11
 DHT_Unified dht(DHT_PIN, DHTTYPE);
 struct dht_results
 {
