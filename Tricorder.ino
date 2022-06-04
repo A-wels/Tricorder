@@ -6,9 +6,18 @@
 #include <Adafruit_Sensor.h>
 #include <DHT_U.h>
 
+// Libraries for PN532
+// https://github.com/elechouse/PN532
+// Auf Basis von: https://warlord0blog.wordpress.com/2021/10/09/esp32-and-nfc-over-i2c/
+#include <PN532_I2C.h>
+#include <PN532.h>
+#include <NfcAdapter.h>
+PN532_I2C pn532i2c(Wire);
+PN532 nfc(pn532i2c);
+volatile bool nfc_connected = false;
+
 // Anzahld der Module
-#define NUMBER_OF_MODULES 2
-int current_task = 0;
+#define NUMBER_OF_MODULES 3
 
 // Ultraschall
 #define TRIG_PIN 14
@@ -127,7 +136,45 @@ void displayDistance()
   display.print("cm");
   display.display();
 }
+int dots = 0;
+int count_direction = 1;
 
+// Bildschirmausgabe für NFC
+void display_NFC()
+{
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.print("Scanne");
+  for (int i = 0; i < dots; i++)
+  {
+    display.print(".");
+  }
+  if (dots == 0)
+  {
+    count_direction = 1;
+  }
+  else if (dots == 3)
+  {
+    count_direction = -1;
+  }
+  dots = dots + count_direction;
+
+  display.println("");
+  display.display();
+}
+
+// Beliebigen text ausgeben
+void display_text(String text)
+{
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.print(text);
+  display.display();
+}
 // Task: Lese das Potentiometer dauerthaft aus. Wird in 2. Thread ausgeführt.
 void read_potentiometer(void *parameter)
 {
@@ -140,12 +187,120 @@ void read_potentiometer(void *parameter)
   }
 }
 
+bool connect_nfc()
+{
+  nfc.begin();
+  // Connected, show version
+  uint32_t versiondata = nfc.getFirmwareVersion();
+  if (!versiondata)
+  {
+    display_text("Scanner\n defekt.");
+    Serial.println("PN53x card not found!");
+    return false;
+  }
+
+  // port
+  Serial.print("Found chip PN5");
+  Serial.println((versiondata >> 24) & 0xFF, HEX);
+  Serial.print("Firmware version: ");
+  Serial.print((versiondata >> 16) & 0xFF, DEC);
+  Serial.print('.');
+  Serial.println((versiondata >> 8) & 0xFF, DEC);
+
+  // Set the max number of retry attempts to read from a card
+  // This prevents us from waiting forever for a card, which is
+  // the default behaviour of the PN532.
+  nfc.setPassiveActivationRetries(0xFF);
+
+  // configure board to read RFID tags
+  nfc.SAMConfig();
+
+  Serial.println("Waiting for card (ISO14443A Mifare)...");
+  Serial.println("");
+
+  return true;
+}
+
+// Lese einen NFC Chip mit dem PN532 (NFC Reader) aus
+void read_nfc()
+{
+  // Wenn pot_val abweicht, so wurde die aktuelle Aufgabe geändert
+
+  int task_at_start = pot_val;
+  boolean success;
+
+  // Buffer: Hier wird die UID des NFC Chips gespeichert
+  uint8_t uid[] = {0, 0, 0, 0, 0, 0, 0};
+
+  // UID Länge
+  uint8_t uid_length;
+
+  // Stelle eine Verbindung
+  nfc_connected = false;
+  display_text("Starte\nScanner...");
+  delay(150);
+  // while (!nfc_connected && task_at_start == pot_val)
+  while (task_at_start == pot_val)
+  {
+    Serial.println(task_at_start);
+    Serial.println(pot_val);
+    Serial.println("");
+    boolean success;
+    // Buffer to store the UID
+    uint8_t uid[] = {0, 0, 0, 0, 0, 0, 0};
+
+    // UID size (4 or 7 bytes depending on card type)
+    uint8_t uidLength;
+
+    // Stelle eine Verbindung mit dem NFC Modul her
+    while (!nfc_connected && task_at_start == pot_val)
+    {
+      nfc_connected = connect_nfc();
+    }
+    if (pot_val != task_at_start)
+    {
+      break;
+    }
+
+    // Versuche einen NFC Chip auszulesen
+    display_NFC();
+
+    success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
+
+    // Falls erkannt: Datenausgabe
+    if (success)
+    {
+      display_text("Scan\nerfolgreich");
+
+      Serial.println("Card Detected");
+      Serial.print("Size of UID: ");
+      Serial.print(uidLength, DEC);
+      Serial.println(" bytes");
+      Serial.print("UID: ");
+      for (uint8_t i = 0; i < uidLength; i++)
+      {
+        Serial.print(" 0x");
+        Serial.print(uid[i], HEX);
+      }
+      Serial.println("");
+      Serial.println("");
+
+      delay(1000);
+    }
+    else
+    {
+      // PN532 probably timed out waiting for a card
+      Serial.println("Timed out waiting for a card");
+    }
+    nfc_connected = connect_nfc();
+  }
+}
 // SETUP -------------------------------------------------
 
 void setup()
 {
   // Serial Monitor
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Starting...");
 
   // Pins für Ultraschall
@@ -156,7 +311,8 @@ void setup()
   pinMode(POTENTIO_PIN, INPUT);
 
   // Task für Potentiometer polling
-  xTaskCreate(read_potentiometer, "Read Potentiometer", 1000, NULL, 1, NULL);
+  TaskHandle_t xHandle = NULL;
+  xTaskCreate(read_potentiometer, "Read Potentiometer", 1000, NULL, 1, &xHandle);
 
   // Bildschirm starten
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
@@ -165,6 +321,7 @@ void setup()
     for (;;)
       ; // Don't proceed, loop forever
   }
+  display_text("System\nboot");
 
   // Temperatursensor starten
   dht.begin();
@@ -205,6 +362,13 @@ void loop()
   {
     displayDistance();
     wait_interruptable(2000);
+    break;
+  }
+
+    // Case 2: NFC
+  case 2:
+  {
+    read_nfc();
     break;
   }
   }
