@@ -238,13 +238,10 @@ void read_nfc()
   // Stelle eine Verbindung
   nfc_connected = false;
   display_text("Starte\nScanner...");
-  delay(150);
+  wait_interruptable(500);
   // while (!nfc_connected && task_at_start == pot_val)
   while (task_at_start == pot_val)
   {
-    Serial.println(task_at_start);
-    Serial.println(pot_val);
-    Serial.println("");
     boolean success;
     // Buffer to store the UID
     uint8_t uid[] = {0, 0, 0, 0, 0, 0, 0};
@@ -285,14 +282,17 @@ void read_nfc()
       Serial.println("");
       Serial.println("");
 
-      delay(1000);
+      wait_interruptable(1000);
     }
     else
     {
       // PN532 probably timed out waiting for a card
       Serial.println("Timed out waiting for a card");
     }
-    nfc_connected = connect_nfc();
+    if (pot_val == task_at_start)
+    {
+      nfc_connected = connect_nfc();
+    }
   }
 }
 // SETUP -------------------------------------------------
