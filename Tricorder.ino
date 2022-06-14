@@ -1,10 +1,8 @@
 #include <SPI.h>
 #include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#include <DHT.h>
+
 #include <Adafruit_Sensor.h>
-#include <DHT_U.h>
+#include "Display.h"
 
 // Libraries for PN532
 // https://github.com/elechouse/PN532
@@ -16,6 +14,12 @@ PN532_I2C pn532i2c(Wire);
 PN532 nfc(pn532i2c);
 volatile bool nfc_connected = false;
 
+// Objekt für Display
+MyDisplay display;
+
+// Objekt für DHT22
+MyTemperature dht(DHT_PIN, DHTTYPE);
+
 // Anzahld der Module
 #define NUMBER_OF_MODULES 3
 
@@ -23,91 +27,9 @@ volatile bool nfc_connected = false;
 #define TRIG_PIN 14
 #define ECHO_PIN 13
 
-// DHT22
-#define DHT_PIN 4
-#define DHTTYPE DHT22 // DHT 11
-DHT_Unified dht(DHT_PIN, DHTTYPE);
-struct dht_results
-{
-  float temperature;
-  float humidity;
-};
-
-// Display
-#define OLED_RESET -1
-
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
 // Potentiometer
 #define POTENTIO_PIN 34
 int pot_val;
-
-// Temperatur messen. Wiederholt den Vorgang bis gültiges Messergebnis vorliegt.
-dht_results measure_temperature()
-{
-  float temperature = 0;
-  float humidity = 0;
-  sensors_event_t event;
-  while (temperature == 0.0 || humidity == 0.0)
-  {
-    dht.temperature().getEvent(&event);
-    if (isnan(event.temperature))
-    {
-      Serial.println(F("Fehler beim Messen der Temperatur"));
-    }
-    else
-    {
-      temperature = event.temperature;
-    }
-
-    dht.humidity().getEvent(&event);
-    if (isnan(event.relative_humidity))
-    {
-      Serial.println(F("Fehler beim lesen der Luftfeuchtigkeit"));
-    }
-    else
-    {
-      humidity = event.relative_humidity;
-    }
-  }
-  return {temperature, humidity};
-}
-
-// Zeige Temperatur auf dem Display an
-void display_temperature(dht_results dht_measurement)
-{
-  display.clearDisplay();
-  display.cp437(true); // Erlaubt ° Zeichen
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-  display.setCursor(0, 0);
-  display.print("Temperatur\n");
-  display.print(dht_measurement.temperature);
-
-  // Setze Textgröße auf 1 und schreibe °
-  display.setTextSize(1);
-  display.write(167);
-  display.setTextSize(2);
-
-  display.print("C");
-  display.display();
-}
-
-// Zeige Luftfeuchtigkeit auf dem Bildschirm an
-void display_humidity(dht_results dht_measurement)
-{
-  display.clearDisplay();
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-  display.setCursor(0, 0);
-  display.print("Luftf.\n");
-  display.print(dht_measurement.humidity);
-  display.print("%");
-  display.display();
-}
 
 // Miss die Distanz.
 float measure_distance()
@@ -119,62 +41,6 @@ float measure_distance()
   return 0.017 * duration_us;
 }
 
-// Misst die Distanz und zeigt die Distanz auf dem Bildschirm an. Messung wird wiederholt bis eine gültige vorliegt.
-void displayDistance()
-{
-  display.clearDisplay();
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-  display.setCursor(0, 0);
-  display.print("Distanz:\n");
-  float distanz = 0;
-  while (distanz == 0)
-  {
-    distanz = measure_distance();
-  }
-  display.print(distanz);
-  display.print("cm");
-  display.display();
-}
-int dots = 0;
-int count_direction = 1;
-
-// Bildschirmausgabe für NFC
-void display_NFC()
-{
-  display.clearDisplay();
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-  display.setCursor(0, 0);
-  display.print("Scanne");
-  for (int i = 0; i < dots; i++)
-  {
-    display.print(".");
-  }
-  if (dots == 0)
-  {
-    count_direction = 1;
-  }
-  else if (dots == 3)
-  {
-    count_direction = -1;
-  }
-  dots = dots + count_direction;
-
-  display.println("");
-  display.display();
-}
-
-// Beliebigen text ausgeben
-void display_text(String text)
-{
-  display.clearDisplay();
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-  display.setCursor(0, 0);
-  display.print(text);
-  display.display();
-}
 // Task: Lese das Potentiometer dauerthaft aus. Wird in 2. Thread ausgeführt.
 void read_potentiometer(void *parameter)
 {
@@ -194,7 +60,7 @@ bool connect_nfc()
   uint32_t versiondata = nfc.getFirmwareVersion();
   if (!versiondata)
   {
-    display_text("Scanner\n defekt.");
+    display.display_text("Scanner\n defekt.");
     Serial.println("PN53x card not found!");
     return false;
   }
@@ -237,7 +103,7 @@ void read_nfc()
 
   // Stelle eine Verbindung
   nfc_connected = false;
-  display_text("Starte\nScanner...");
+  display.display_text("Starte\nScanner...");
   wait_interruptable(500);
   // while (!nfc_connected && task_at_start == pot_val)
   while (task_at_start == pot_val)
@@ -260,14 +126,14 @@ void read_nfc()
     }
 
     // Versuche einen NFC Chip auszulesen
-    display_NFC();
+    display.display_NFC();
 
     success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
 
     // Falls erkannt: Datenausgabe
     if (success)
     {
-      display_text("Scan\nerfolgreich");
+      display.display_text("Scan\nerfolgreich");
 
       Serial.println("Card Detected");
       Serial.print("Size of UID: ");
@@ -314,17 +180,10 @@ void setup()
   TaskHandle_t xHandle = NULL;
   xTaskCreate(read_potentiometer, "Read Potentiometer", 1000, NULL, 1, &xHandle);
 
-  // Bildschirm starten
-  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
-  {
-    Serial.println(F("SSD1306 allocation failed"));
-    for (;;)
-      ; // Don't proceed, loop forever
-  }
-  display_text("System\nboot");
-
+  // Display starten
+  display.initialize_display();
   // Temperatursensor starten
-  dht.begin();
+  dht.initialize();
 }
 
 // Wartet ungefähr für die angegebene Dauer. Wird vorzeitig abgebrochen, wenn pot_val sich verändert.
@@ -346,21 +205,26 @@ void loop()
     // Case 0: Thermometer
   case 0:
   {
-    dht_results dht_measurement = measure_temperature();
-    display_temperature(dht_measurement);
+    dht_results dht_measurement = dht.measure_temperature();
+    display.display_temperature(dht_measurement);
     wait_interruptable(2000);
     if (pot_val != 0)
     {
       break;
     }
-    display_humidity(dht_measurement);
+    display.display_humidity(dht_measurement);
     wait_interruptable(2000);
     break;
   }
     // Case 1: Ultraschall
   case 1:
   {
-    displayDistance();
+    float distance = 0;
+    while (distance == 0)
+    {
+      distance = measure_distance();
+    }
+    display.display_distance(distance);
     wait_interruptable(2000);
     break;
   }
