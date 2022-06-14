@@ -3,6 +3,7 @@
 
 #include <Adafruit_Sensor.h>
 #include "Display.h"
+#include "Ultraschall.h"
 
 // Libraries for PN532
 // https://github.com/elechouse/PN532
@@ -10,6 +11,7 @@
 #include <PN532_I2C.h>
 #include <PN532.h>
 #include <NfcAdapter.h>
+
 PN532_I2C pn532i2c(Wire);
 PN532 nfc(pn532i2c);
 volatile bool nfc_connected = false;
@@ -20,26 +22,15 @@ MyDisplay display;
 // Objekt für DHT22
 MyTemperature dht(DHT_PIN, DHTTYPE);
 
+// Objekt für Ultraschall
+MyUltraschall ultraschall;
+
 // Anzahld der Module
 #define NUMBER_OF_MODULES 3
-
-// Ultraschall
-#define TRIG_PIN 14
-#define ECHO_PIN 13
 
 // Potentiometer
 #define POTENTIO_PIN 34
 int pot_val;
-
-// Miss die Distanz.
-float measure_distance()
-{
-  digitalWrite(TRIG_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN, LOW);
-  float duration_us = pulseIn(ECHO_PIN, HIGH);
-  return 0.017 * duration_us;
-}
 
 // Task: Lese das Potentiometer dauerthaft aus. Wird in 2. Thread ausgeführt.
 void read_potentiometer(void *parameter)
@@ -169,9 +160,8 @@ void setup()
   Serial.begin(115200);
   Serial.println("Starting...");
 
-  // Pins für Ultraschall
-  pinMode(TRIG_PIN, OUTPUT); // Setzt den vorher definierten trigPin als Output.
-  pinMode(ECHO_PIN, INPUT);  // Setzt den vorher defnierten echoPin als Input.
+  // Ultraschall initialisieren
+  ultraschall.initialize();
 
   // Pin für Potentiometer
   pinMode(POTENTIO_PIN, INPUT);
@@ -222,10 +212,10 @@ void loop()
     float distance = 0;
     while (distance == 0)
     {
-      distance = measure_distance();
+      distance = ultraschall.measure_distance();
     }
     display.display_distance(distance);
-    wait_interruptable(2000);
+    wait_interruptable(200);
     break;
   }
 
