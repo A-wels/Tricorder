@@ -9,12 +9,12 @@
 #include <PN532.h>
 #include <NfcAdapter.h>
 
-#include "Display.h"
-#include "Ultraschall.h"
-#include "Util.h"
-#include "NFC.h"
-#include "Potentiometer.h"
-#include "Definitions.h"
+#include "src/Display.h"
+#include "src/Ultraschall.h"
+#include "src/Util.h"
+#include "src/NFC.h"
+#include "src/Potentiometer.h"
+#include "src/Definitions.h"
 
 // Objekt für DHT22
 MyTemperature dht(DHT_PIN, DHTTYPE);
