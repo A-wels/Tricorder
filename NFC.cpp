@@ -55,7 +55,7 @@ void MyNFC::read_nfc()
 
     MyDisplay::display_text("Starte\nScanner...");
 
-    Util::wait_interruptable(500);
+    Util::wait_interruptable(1000);
 
     while (task_at_start == Util::pot_val)
     {
