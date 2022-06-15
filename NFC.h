@@ -15,11 +15,12 @@
 
 class MyNFC
 {
-
 public:
-    static void connect_nfc(PN532 nfc, MyDisplay display);
-    static void read_nfc(PN532 nfc, MyDisplay display);
+    static void connect_nfc();
+    static void read_nfc();
     static bool nfc_connected;
+    static PN532_I2C pn532i2c;
+    static PN532 nfc;
 };
 
 #endif

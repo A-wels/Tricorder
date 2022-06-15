@@ -14,18 +14,11 @@
 #include <PN532.h>
 #include <NfcAdapter.h>
 
-// Objekt für Display
-MyDisplay display;
-
 // Objekt für DHT22
 MyTemperature dht(DHT_PIN, DHTTYPE);
 
 // Objekt für Ultraschall
 MyUltraschall ultraschall;
-
-// Objekt für NFC
-PN532_I2C pn532i2c(Wire);
-PN532 nfc = PN532(pn532i2c);
 
 // Anzahld der Module
 #define NUMBER_OF_MODULES 3
@@ -51,7 +44,6 @@ void setup()
 {
   // Serial Monitor
   Serial.begin(9600);
-  delay(2000);
   Serial.println("Starting...");
 
   // Ultraschall initialisieren
@@ -65,7 +57,7 @@ void setup()
   xTaskCreate(read_potentiometer, "Read Potentiometer", 1000, NULL, 1, &xHandle);
 
   // Display starten
-  display.initialize_display();
+  MyDisplay::initialize_display();
 
   // Temperatursensor starten
   dht.initialize();
@@ -79,13 +71,13 @@ void loop()
   case 0:
   {
     dht_results dht_measurement = dht.measure_temperature();
-    display.display_temperature(dht_measurement);
+    MyDisplay::display_temperature(dht_measurement);
     Util::wait_interruptable(2000);
     if (Util::pot_val != 0)
     {
       break;
     }
-    display.display_humidity(dht_measurement);
+    MyDisplay::display_humidity(dht_measurement);
     Util::wait_interruptable(2000);
     break;
   }
@@ -97,7 +89,7 @@ void loop()
     {
       distance = ultraschall.measure_distance();
     }
-    display.display_distance(distance);
+    MyDisplay::display_distance(distance);
     Util::wait_interruptable(200);
     break;
   }
@@ -105,7 +97,7 @@ void loop()
     // Case 2: NFC
   case 2:
   {
-    MyNFC::read_nfc(nfc, display);
+    MyNFC::read_nfc();
     break;
   }
   }

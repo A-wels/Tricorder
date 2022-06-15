@@ -1,14 +1,16 @@
 #include "NFC.h"
 bool MyNFC::nfc_connected = false;
+PN532_I2C MyNFC::pn532i2c(Wire);
+PN532 MyNFC::nfc(pn532i2c);
 
-void MyNFC::connect_nfc(PN532 nfc, MyDisplay display)
+void MyNFC::connect_nfc()
 {
-    nfc.begin();
+    MyNFC::nfc.begin();
     // Connected, show version
     uint32_t versiondata = nfc.getFirmwareVersion();
     if (!versiondata)
     {
-        display.display_text("Scanner\n defekt.");
+        MyDisplay::display_text("Scanner\n defekt.");
         Serial.println("PN53x card not found!");
         MyNFC::nfc_connected = false;
     }
@@ -36,28 +38,22 @@ void MyNFC::connect_nfc(PN532 nfc, MyDisplay display)
 }
 
 // Lese einen NFC Chip mit dem PN532 (NFC Reader) aus
-void MyNFC::read_nfc(PN532 nfc, MyDisplay display)
+void MyNFC::read_nfc()
 {
-    return;
 
     // Wenn Util::pot_val abweicht, so wurde die aktuelle Aufgabe geändert
     int task_at_start = Util::pot_val;
     boolean success;
     // Buffer: Hier wird die UID des NFC Chips gespeichert
-    int *uid_ptr = (int *)malloc(7 * sizeof(uint8_t));
+    uint8_t uid[] = {0, 0, 0, 0, 0, 0, 0};
 
-    for (int i = 0; i < 7; i++)
-    {
-        uid_ptr[i] = (uint8_t)0;
-    }
-    free(uid_ptr);
     // UID Länge
     uint8_t uid_length;
 
     // Stelle eine Verbindung
     MyNFC::nfc_connected = false;
 
-    display.display_text("Starte\nScanner...");
+    MyDisplay::display_text("Starte\nScanner...");
 
     Util::wait_interruptable(500);
 
@@ -72,7 +68,7 @@ void MyNFC::read_nfc(PN532 nfc, MyDisplay display)
         // Stelle eine Verbindung mit dem NFC Modul her
         while (!MyNFC::nfc_connected && task_at_start == Util::pot_val)
         {
-            connect_nfc(nfc, display);
+            connect_nfc();
         }
 
         if (Util::pot_val != task_at_start)
@@ -81,14 +77,14 @@ void MyNFC::read_nfc(PN532 nfc, MyDisplay display)
         }
 
         // Versuche einen NFC Chip auszulesen
-        display.display_NFC();
+        MyDisplay::display_NFC();
 
         success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
 
         // Falls erkannt: Datenausgabe
         if (success)
         {
-            display.display_text("Scan\nerfolgreich");
+            MyDisplay::display_text("Scan\nerfolgreich");
 
             Serial.println("Card Detected");
             Serial.print("Size of UID: ");
@@ -112,13 +108,7 @@ void MyNFC::read_nfc(PN532 nfc, MyDisplay display)
         }
         if (Util::pot_val == task_at_start)
         {
-            //  connect_nfc(nfc, display);
+            connect_nfc();
         }
     }
-    Serial.println("Checking for errors");
-    bool working = heap_caps_check_integrity_all(true);
-    Serial.println(working);
-    Serial.println("Check done");
-    delay(1000);
-    free(uid_ptr);
 }

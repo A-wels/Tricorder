@@ -14,16 +14,14 @@
 class MyDisplay
 {
 public:
-    MyDisplay();
-    void initialize_display();
-    void display_temperature(dht_results dht_measurement);
-    void display_humidity(dht_results dht_measurement);
-    void display_distance(float distance);
-    void display_NFC();
-    void display_text(String text);
+    static void initialize_display();
+    static void display_temperature(dht_results dht_measurement);
+    static void display_humidity(dht_results dht_measurement);
+    static void display_distance(float distance);
+    static void display_NFC();
+    static void display_text(String text);
+    static Adafruit_SSD1306 display;
 
 private:
-    Adafruit_SSD1306 display;
 };
-
 #endif

@@ -1,12 +1,9 @@
 #include "Display.h"
-
-MyDisplay::MyDisplay()
-{
-    display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-}
+Adafruit_SSD1306 MyDisplay::display;
 
 void MyDisplay::initialize_display()
 {
+    display = Adafruit_SSD1306(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
     // Bildschirm starten
     if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
