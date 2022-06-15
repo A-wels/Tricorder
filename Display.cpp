@@ -61,8 +61,8 @@ void MyDisplay::display_distance(float distance)
     display.print("cm");
     display.display();
 }
-int dots = 0;
-int count_direction = 1;
+static int dots = 0;
+static int count_direction = 1;
 
 // Bildschirmausgabe für NFC
 void MyDisplay::display_NFC()

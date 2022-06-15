@@ -4,6 +4,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include "Temperature.h"
+#include "Util.h"
 
 // Display
 #define OLED_RESET -1
