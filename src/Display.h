@@ -20,6 +20,8 @@ public:
     static void display_distance(float distance);
     static void display_NFC();
     static void display_text(String text);
+    static void display_heartbeat(int pulse);
+    static void display_CO2(float ppm);
     static Adafruit_SSD1306 display;
 
 private:

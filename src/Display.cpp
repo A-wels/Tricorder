@@ -97,3 +97,35 @@ void MyDisplay::display_text(String text)
     display.print(text);
     display.display();
 }
+
+void MyDisplay::display_heartbeat(int pulse)
+{
+    display.clearDisplay();
+    display.setTextSize(2);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 0);
+    display.print("BPM:\n" + (String)pulse);
+    display.display();
+}
+
+void MyDisplay::display_CO2(float ppm)
+{
+    {
+        if (ppm <= LOW_CO2)
+        {
+            MyDisplay::display_text("Geringer CO2\nAnteil\n" + (String)ppm + "ppm");
+        }
+        else if (ppm <= NORMAL_CO2)
+        {
+            MyDisplay::display_text("Normaler CO2\nAnteil\n" + (String)ppm + "ppm");
+        }
+        else if (ppm <= HIGH_CO2)
+        {
+            MyDisplay::display_text("Hoher CO2\nAnteil\n" + (String)ppm + "ppm");
+        }
+        else
+        {
+            MyDisplay::display_text("Gas erkannt!\n" + (String)ppm + "ppm");
+        }
+    }
+}

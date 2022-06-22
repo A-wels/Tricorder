@@ -15,7 +15,8 @@
 #include "src/NFC.h"
 #include "src/Potentiometer.h"
 #include "src/Definitions.h"
-
+#include "src/Heartbeat.h"
+#include "src/CO2.h"
 // Objekt für DHT22
 MyTemperature dht(DHT_PIN, DHTTYPE);
 
@@ -36,6 +37,8 @@ void setup()
   // Ultraschall initialisieren
   ultraschall.initialize();
 
+  // Gassensor initialisieren
+  GasSensor::intialize_sensor();
   // Display starten
   MyDisplay::initialize_display();
 }
@@ -66,7 +69,7 @@ void loop()
       distance = ultraschall.measure_distance();
     }
     MyDisplay::display_distance(distance);
-    Util::wait_interruptable(200);
+    Util::wait_interruptable(2000);
     break;
   }
 
@@ -75,6 +78,19 @@ void loop()
   {
     // Versuche einen NFC Chip zu lesen
     MyNFC::read_nfc();
+    break;
+  }
+  // Case 3: Heartbeat
+  case 3:
+  {
+    Heartbeat::measure_heartbeat();
+    break;
+  }
+
+  // Case 4: CO2 Sensor
+  case 4:
+  {
+    GasSensor::get_ppm();
     break;
   }
   }
