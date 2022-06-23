@@ -4,6 +4,10 @@
 // Anzahld der Module
 #define NUMBER_OF_MODULES 5
 
+// SDA und SCL Pins
+#define SDA_PIN 21
+#define SCL_PIN 22
+
 // DHT22
 #define DHT_PIN 4
 #define DHTTYPE DHT22 // DHT 11
