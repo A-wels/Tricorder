@@ -13,4 +13,4 @@ This is still very WIP
 - [ ] NFC reader
 - [ ] KY-039 Heartbeat Sensor: Measure pulse
 - [ ] GY-521 Compass
-- [ ] MQ-135 Gas Sensor
+- [x] MQ-135 Gas Sensor
