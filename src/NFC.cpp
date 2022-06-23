@@ -10,7 +10,7 @@ void MyNFC::connect_nfc()
     uint32_t versiondata = nfc.getFirmwareVersion();
     if (!versiondata)
     {
-        MyDisplay::display_text("Scanner\n defekt.");
+       // MyDisplay::display_text("Scanner\n defekt.");
         Serial.println("PN53x card not found!");
         MyNFC::nfc_connected = false;
     }
@@ -53,7 +53,7 @@ void MyNFC::read_nfc()
     // Stelle eine Verbindung
     MyNFC::nfc_connected = false;
 
-    MyDisplay::display_text("Starte\nScanner...");
+   // MyDisplay::display_text("Starte\nScanner...");
 
     Util::wait_interruptable(1000);
 
@@ -84,7 +84,7 @@ void MyNFC::read_nfc()
         // Falls erkannt: Datenausgabe
         if (success)
         {
-            MyDisplay::display_text("Scan\nerfolgreich");
+          //  MyDisplay::display_text("Scan\nerfolgreich");
 
             Serial.println("Card Detected");
             Serial.print("Size of UID: ");

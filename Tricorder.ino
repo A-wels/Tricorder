@@ -8,7 +8,6 @@
 #include <PN532_I2C.h>
 #include <PN532.h>
 #include <NfcAdapter.h>
-
 #include "src/Display.h"
 #include "src/Ultraschall.h"
 #include "src/Util.h"

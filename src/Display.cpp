@@ -1,17 +1,12 @@
 #include "Display.h"
+U8G2_SH1106_128X64_NONAME_1_SW_I2C MyDisplay::display(U8G2_R0, SCL_PIN, SDA_PIN);
 
 void MyDisplay::initialize_display()
 {
-    display(U8G2_R0, SCL_PIN, SDA_PIN);
     // Bildschirm starten
     display.begin();
-    display.firstPage();
-    do
-    {
-        display.setFont(u8g2_font_ncenB14_tr);
-        display.drawStr(0, 24, "test World!");
-    } while (display.nextPage());
-    // display_text("System\nboot");
+    String text[] = {"System", "Boot"};
+    display_text(text,2);
 }
 // Zeige Temperatur auf dem Display an
 void MyDisplay::display_temperature(dht_results dht_measurement)
@@ -86,9 +81,23 @@ void MyDisplay::display_NFC()
     // display.display();
 }
 
+
 // Beliebigen text ausgeben
-void MyDisplay::display_text(String text)
+void MyDisplay::display_text(String text[], int lines)
 {
+
+ 
+    display.firstPage();
+    do
+    {
+        display.setFont(u8g2_font_ncenB14_tr);
+        for(int i=1;i<lines+1;i++){
+            display.drawStr(0, 15*i, text[i-1].c_str());
+
+        }
+
+    } while (display.nextPage());
+
     // display.clearDisplay();
     // display.setTextSize(2);
     // display.setTextColor(WHITE);
