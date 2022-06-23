@@ -43,6 +43,8 @@ void setup()
 }
 void loop()
 {
+  Serial.println(Util::pot_val);
+
   switch (Util::pot_val)
   {
     // Case 0: Thermometer

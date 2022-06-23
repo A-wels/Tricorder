@@ -8,6 +8,9 @@
 #define SDA_PIN 21
 #define SCL_PIN 22
 
+// font for oled
+#define FONT u8g2_font_timB14_tf
+
 // DHT22
 #define DHT_PIN 4
 #define DHTTYPE DHT22 // DHT 11
