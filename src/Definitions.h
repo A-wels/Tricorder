@@ -2,7 +2,7 @@
 #define DEFINITIONS_INCLUDED
 
 // Anzahld der Module
-#define NUMBER_OF_MODULES 5
+#define NUMBER_OF_MODULES 6
 
 // SDA und SCL Pins
 #define SDA_PIN 21
@@ -24,8 +24,8 @@
 #define heartbeat_rise_threshold 4
 
 // MQ135
-#define MQ_PIN 39
-#define RZERO 206.85
+#define MQ_PIN 25
+#define RZERO 100 // 206.85
 
 #define LOW_CO2 300
 #define NORMAL_CO2 500

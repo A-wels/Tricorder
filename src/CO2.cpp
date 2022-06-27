@@ -12,7 +12,9 @@ void GasSensor::intialize_sensor()
 void GasSensor::get_ppm()
 {
     float ppm = gas_sensor.getPPM();
-    Serial.println("ppm: " + (String)ppm);
-    MyDisplay::display_CO2(ppm);
+    float percent = ppm / 1000;
+    Serial.println(ppm);
+    Serial.println("percent: " + (String)percent);
+    MyDisplay::display_CO2(percent, ppm);
     Util::wait_interruptable(500);
 }

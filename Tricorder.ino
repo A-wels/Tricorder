@@ -70,7 +70,6 @@ void loop()
       distance = ultraschall.measure_distance();
     }
     MyDisplay::display_distance(distance);
-    Util::wait_interruptable(2000);
     break;
   }
 
@@ -87,9 +86,14 @@ void loop()
     Heartbeat::measure_heartbeat();
     break;
   }
+  // Placeholder for compass
+  case 4:
+  {
+    break;
+  }
 
   // Case 4: CO2 Sensor
-  case 4:
+  case 5:
   {
     GasSensor::get_ppm();
     break;

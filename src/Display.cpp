@@ -82,32 +82,32 @@ void MyDisplay::display_heartbeat(int pulse)
     display_text(text, 1);
 }
 
-void MyDisplay::display_CO2(float ppm)
+void MyDisplay::display_CO2(float percent, float ppm)
 {
     String text[3];
     if (ppm <= LOW_CO2)
     {
         text[0] = "Geringer CO2";
         text[1] = "Anteil";
-        text[2] = (String)ppm + "ppm";
+        text[2] = (String)percent + "%";
     }
     else if (ppm <= NORMAL_CO2)
     {
         text[0] = "Normaler CO2";
         text[1] = "Anteil";
-        text[2] = (String)ppm + "ppm";
+        text[2] = (String)percent + "%";
     }
     else if (ppm <= HIGH_CO2)
     {
         text[0] = "Hoher CO2";
         text[1] = "Anteil";
-        text[2] = (String)ppm + "ppm";
+        text[2] = (String)percent + "%";
     }
     else
     {
         text[0] = "Gefährliches Gas";
         text[1] = "erkannt!";
-        text[2] = (String)ppm + "ppm";
+        text[2] = (String)percent + "%";
     }
 
     display_text(text, 3);
