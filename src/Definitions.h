@@ -24,7 +24,7 @@
 #define heartbeat_rise_threshold 4
 
 // MQ135
-#define MQ_PIN 25
+#define MQ_PIN 39
 
 #define VERY_LOW_C02 0
 #define LOW_CO2 300
