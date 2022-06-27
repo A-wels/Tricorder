@@ -25,10 +25,12 @@
 
 // MQ135
 #define MQ_PIN 25
-#define RZERO 100 // 206.85
 
+#define VERY_LOW_C02 0
 #define LOW_CO2 300
-#define NORMAL_CO2 500
-#define HIGH_CO2 2000
+#define NORMAL_CO2 450
+#define HIGH_CO2 550
+#define VERY_HIGH_CO2 1000
+#define TOXIC_GAS 3000
 
 #endif

@@ -38,6 +38,7 @@ void setup()
 
   // Gassensor initialisieren
   GasSensor::intialize_sensor();
+
   // Display starten
   MyDisplay::initialize_display();
 }

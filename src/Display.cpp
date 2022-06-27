@@ -1,5 +1,5 @@
 #include "Display.h"
-U8G2_SH1106_128X64_NONAME_1_SW_I2C MyDisplay::display(U8G2_R0, SCL_PIN, SDA_PIN);
+U8G2_SH1106_128X64_NONAME_F_SW_I2C MyDisplay::display(U8G2_R0, SCL_PIN, SDA_PIN);
 
 void MyDisplay::initialize_display()
 {
@@ -63,16 +63,15 @@ void MyDisplay::display_NFC()
 void MyDisplay::display_text(String text[], int lines)
 {
 
+    display.clearBuffer();
+    display.setFont(FONT);
     display.firstPage();
-    do
+    display.setFont(FONT);
+    for (int i = 1; i < lines + 1; i++)
     {
-        display.setFont(FONT);
-        for (int i = 1; i < lines + 1; i++)
-        {
-            display.drawStr(0, 15 * i, text[i - 1].c_str());
-        }
-
-    } while (display.nextPage());
+        display.drawStr(0, 15 * i, text[i - 1].c_str());
+    }
+    display.sendBuffer();
 }
 
 void MyDisplay::display_heartbeat(int pulse)
@@ -87,27 +86,39 @@ void MyDisplay::display_CO2(float percent, float ppm)
     String text[3];
     if (ppm <= LOW_CO2)
     {
-        text[0] = "Geringer CO2";
+        text[0] = "Minimaler CO2";
         text[1] = "Anteil";
         text[2] = (String)percent + "%";
     }
-    else if (ppm <= NORMAL_CO2)
+    if (ppm <= NORMAL_CO2)
     {
-        text[0] = "Normaler CO2";
+        text[0] = "Geringer CO2";
         text[1] = "Anteil";
         text[2] = (String)percent + "%";
     }
     else if (ppm <= HIGH_CO2)
     {
+        text[0] = "Normaler CO2";
+        text[1] = "Anteil";
+        text[2] = (String)percent + "%";
+    }
+    else if (ppm <= VERY_HIGH_CO2)
+    {
         text[0] = "Hoher CO2";
         text[1] = "Anteil";
         text[2] = (String)percent + "%";
     }
+    else if (ppm <= TOXIC_GAS)
+    {
+        text[0] = "Zu hoher C02";
+        text[1] = "Anteil erkannt!";
+        text[2] = (String)percent + "%";
+    }
     else
     {
-        text[0] = "Gefährliches Gas";
-        text[1] = "erkannt!";
-        text[2] = (String)percent + "%";
+        text[0] = "Gefaehrliches";
+        text[1] = "Gas erkannt!";
+        text[2] = "GEFAHR";
     }
 
     display_text(text, 3);
