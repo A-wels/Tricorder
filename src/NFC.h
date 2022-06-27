@@ -22,5 +22,4 @@ public:
     static PN532_I2C pn532i2c;
     static PN532 nfc;
 };
-
 #endif

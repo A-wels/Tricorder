@@ -123,3 +123,20 @@ void MyDisplay::display_CO2(float percent, float ppm)
 
     display_text(text, 3);
 }
+
+void MyDisplay::display_NFC_results(uint8_t uid)
+{
+    String text[3];
+    uint8_t BABY_YODA[] = {4, 140, 196, 146, 243, 103, 128};
+
+    if (uid == *BABY_YODA)
+    {
+        Serial.println("YAY");
+        text[0] = "Lebensform aus";
+        text[1] = "Star Wards";
+        text[2] = "Name: Grogu";
+
+        display_text(text, 3);
+        Util::wait_interruptable(5000);
+    }
+}

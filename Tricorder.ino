@@ -27,7 +27,7 @@ MyUltraschall ultraschall;
 void setup()
 {
   // Serial Monitor
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Starting...");
 
   // Potentiometer initialisieren
@@ -87,16 +87,17 @@ void loop()
     Heartbeat::measure_heartbeat();
     break;
   }
-  // Placeholder for compass
-  case 4:
-  {
-    break;
-  }
 
   // Case 4: CO2 Sensor
-  case 5:
+  case 4:
   {
     GasSensor::get_ppm();
+    break;
+  }
+    // Placeholder for compass
+  case 5:
+  {
+    Serial.println("Compass");
     break;
   }
   }

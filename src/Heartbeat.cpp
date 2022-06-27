@@ -66,7 +66,6 @@ void Heartbeat::measure_heartbeat()
                 print_value = 60000. / (0.4 * first + 0.3 * second + 0.3 * third);
 
                 MyDisplay::display_heartbeat((int)print_value);
-
                 third = second;
                 second = first;
             }
