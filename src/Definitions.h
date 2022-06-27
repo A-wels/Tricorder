@@ -20,8 +20,6 @@
 
 // KY039 pin: Heartbeat
 #define HEARTBEAT_PIN 36
-#define heartbeat_samp_siz 4
-#define heartbeat_rise_threshold 4
 
 // MQ135
 #define MQ_PIN 39

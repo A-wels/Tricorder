@@ -124,17 +124,26 @@ void MyDisplay::display_CO2(float percent, float ppm)
     display_text(text, 3);
 }
 
-void MyDisplay::display_NFC_results(uint8_t uid)
+void MyDisplay::display_NFC_results(uint8_t uid[])
 {
     String text[3];
     uint8_t BABY_YODA[] = {4, 140, 196, 146, 243, 103, 128};
+    uint8_t PARFUEM[] = {4, 128, 209, 146, 243, 103, 128};
 
-    if (uid == *BABY_YODA)
+    if (uid[1] == BABY_YODA[1] && uid[2] == BABY_YODA[2])
     {
-        Serial.println("YAY");
-        text[0] = "Lebensform aus";
-        text[1] = "Star Wards";
-        text[2] = "Name: Grogu";
+        text[0] = "Name: Grogu";
+        text[1] = "Art: Kuscheltier";
+        text[2] = "Lebendig: Nein";
+
+        display_text(text, 3);
+        Util::wait_interruptable(5000);
+    }
+    else if (uid[1] == PARFUEM[1] && uid[2] == PARFUEM[2])
+    {
+        text[0] = "Name: Parfuem";
+        text[1] = "Ueberdeckt Gestank";
+        text[2] = "Enthaelt: Alkohol";
 
         display_text(text, 3);
         Util::wait_interruptable(5000);

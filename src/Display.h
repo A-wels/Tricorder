@@ -19,7 +19,7 @@ public:
     static void display_humidity(dht_results dht_measurement);
     static void display_distance(float distance);
     static void display_NFC();
-    static void display_NFC_results(uint8_t uid);
+    static void display_NFC_results(uint8_t uid[]);
     static void display_text(String text[], int lines);
     static void display_heartbeat(int pulse);
     static void display_CO2(float percent, float ppm);

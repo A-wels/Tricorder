@@ -30,6 +30,9 @@ void setup()
   Serial.begin(115200);
   Serial.println("Starting...");
 
+  // DELETE
+  pinMode(2, OUTPUT);
+
   // Potentiometer initialisieren
   MyPotentiometer::intialize_potentiometer();
 
@@ -41,6 +44,9 @@ void setup()
 
   // Display starten
   MyDisplay::initialize_display();
+
+  // Herzschlag sensor
+  pinMode(HEARTBEAT_PIN, INPUT);
 }
 void loop()
 {
