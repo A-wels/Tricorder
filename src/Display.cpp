@@ -147,3 +147,63 @@ void MyDisplay::display_NFC_results(uint8_t uid[])
         Util::wait_interruptable(5000);
     }
 }
+
+// https://www.reddit.com/r/arduino/comments/9mg45n/arduino_compass_display_or_why_i_relearned_8th/
+void MyDisplay::display_compass(float heading)
+{
+    int bearing = (int)heading;
+    display.clearBuffer();
+    static int armLength = 22;
+    static int arrowLength = 15;
+    static int cx = 86;
+    static int cy = 32;
+    int armX, armY, arrow1X, arrow1Y, arrow2X, arrow2Y;
+
+    // convert degree to radian
+    float bearingRad = bearing / 57.2957795;     // 1 Radian is 57.2957 degrees
+    float arm1Rad = (bearing - 15) / 57.2957795; // calculate for little arrow arms +/- a few degrees.
+    float arm2Rad = (bearing + 15) / 57.2957795;
+
+    armX = armLength * cos(bearingRad);  // use trig to get x and y values. x=hypotenuse*cos(angle in Rads)
+    armY = -armLength * sin(bearingRad); // y = hypotenuse*sin(angle in Rads)
+
+    arrow1X = arrowLength * cos(arm1Rad); // x and y offsets to draw the arrow bits
+    arrow1Y = -arrowLength * sin(arm1Rad);
+    arrow2X = arrowLength * cos(arm2Rad); // x and y offsets to draw the rest of the arrow bits
+    arrow2Y = -arrowLength * sin(arm2Rad);
+
+    // draw line, circle, and arrows
+    display.drawLine(cx, cy, cx - armY, cy - armX); // for some reason have to invert x and y to get correct compass heading
+    // u8g2.drawLine(cx-armY, cy-armX, cx-arrow1Y, cy-arrow1X); // draw 1/2 of arrowhead
+    // u8g2.drawLine(cx-armY, cy-armX, cx-arrow2Y, cy-arrow2X);
+    display.drawTriangle(cx - armY, cy - armX, cx - arrow1Y, cy - arrow1X, cx - arrow2Y, cy - arrow2X);
+    display.drawCircle(cx, cy, armLength, U8G2_DRAW_ALL);
+    display.drawCircle(cx, cy, 2, U8G2_DRAW_ALL);
+
+    // Draw tick marks at each Compass point
+    display.drawLine(cx, cy - (armLength - 2), cx, cy - (armLength + 2)); // North tick mark
+    display.drawLine(cx, cy + (armLength - 2), cx, cy + (armLength + 2)); // South tick mark
+    display.drawLine(cx - (armLength - 2), cy, cx - (armLength + 2), cy); // West tick mark
+    display.drawLine(cx + (armLength - 2), cy, cx + (armLength + 2), cy); // East tick mark
+    // u8g2.setFont(u8g_font_unifont);
+    display.setFont(u8g2_font_profont12_tf); // 8 pixel font
+
+    display.setCursor(10, 15);
+    display.print("Richtung: ");
+    // Label the Compass Directions
+    display.setCursor(cx - 2, cy - (armLength + 1)); // need to offset each Label by a bit. - See u8g2.print() function
+    display.print("N");
+    display.setCursor(cx - 2, cy + (armLength + 10)); // 2 + font size of 8 = 10
+    display.print("S");
+    display.setCursor(cx + (armLength + 4), cy + 4);
+    display.print("E");
+    display.setCursor(cx - (armLength + 8), cy + 4);
+    display.print("W");
+
+    // Display the actual bearing in a larger font
+    display.setCursor(20, 35);
+    display.setFont(u8g2_font_timR14_tf); // separate font for Bearing
+    display.print((int)heading);
+
+    display.sendBuffer();
+}

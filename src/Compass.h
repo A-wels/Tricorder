@@ -1,16 +1,17 @@
 #ifndef COMPASS_CLASS
 #define COMPASS_CLASS
 
-#include <DFRobot_QMC5883.h>
+#include <QMC5883LCompass.h>
 
 #include "Display.h"
 #include "Util.h"
 #include "Definitions.h"
+#include "NFC.h"
 
 class Compass
 {
 public:
-    static DFRobot_QMC5883 compass;
+    static QMC5883LCompass compass;
 
     static void intialize();
     static void get_readings();

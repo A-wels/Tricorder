@@ -23,6 +23,7 @@ public:
     static void display_text(String text[], int lines);
     static void display_heartbeat(int pulse);
     static void display_CO2(float percent, float ppm);
+    static void display_compass(float heading);
     static U8G2_SH1106_128X64_NONAME_F_SW_I2C display;
 };
 #endif
