@@ -15,9 +15,9 @@ void MyNFC::connect_nfc()
     uint32_t versiondata = nfc.getFirmwareVersion();
     if (!versiondata)
     {
-        String text[] = {"Scanner", " defekt"};
-        MyDisplay::display_text(text, 2);
-        Serial.println("PN53x card not found!");
+        //  String text[] = {"Scanner", " defekt"};
+        //  MyDisplay::display_text(text, 2);
+        //       Serial.println("PN53x card not found!");
         MyNFC::nfc_connected = false;
     }
     else
