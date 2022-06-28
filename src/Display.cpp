@@ -65,8 +65,6 @@ void MyDisplay::display_text(String text[], int lines)
 
     display.clearBuffer();
     display.setFont(FONT);
-    display.firstPage();
-    display.setFont(FONT);
     for (int i = 1; i < lines + 1; i++)
     {
         display.drawStr(0, 15 * i, text[i - 1].c_str());

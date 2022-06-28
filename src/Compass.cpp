@@ -1,6 +1,7 @@
 #include "Compass.h"
 
 // Kompass an I2C Adresse zuweisen
+DFRobot_QMC5883 Compass::compass(&Wire, 0x0D);
 
 void Compass::intialize()
 {
@@ -24,8 +25,9 @@ void Compass::get_readings()
      * @n      For Münster / Germany declination angle is 2'58E (positive)
      * @n      Formula: (deg + (min / 60.0)) / (180 / PI);
      */
-    // float declinationAngle = (2.0 + (58.0 / 60.0)) / (180 / PI);
-    //  compass.setDeclinationAngle(declinationAngle);
+
+    float declinationAngle = (2.0 + (58.0 / 60.0)) / (180 / PI);
+    compass.setDeclinationAngle(declinationAngle);
     sVector_t mag = compass.readRaw();
     compass.getHeadingDegrees();
     Serial.print("X:");
@@ -36,11 +38,9 @@ void Compass::get_readings()
     Serial.println(mag.ZAxis);
     Serial.print("Degress = ");
     Serial.println(mag.HeadingDegress);
-
-    Serial.println("Heading: " + (String)mag.HeadingDegress);
-
-    String text[] = {"Richtung:", (String)mag.HeadingDegress};
+    float heading_degress = mag.HeadingDegress;
+    Serial.println(heading_degress);
+    String text[] = {"Richtung:", (String)heading_degress};
     MyDisplay::display_text(text, 2);
-
-    Util::wait_interruptable(100);
+    delay(1000);
 }

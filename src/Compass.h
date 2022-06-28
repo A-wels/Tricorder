@@ -15,6 +15,5 @@ public:
     static void intialize();
     static void get_readings();
 };
-DFRobot_QMC5883 Compass::compass(&Wire, 0x0D);
 
 #endif
