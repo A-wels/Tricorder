@@ -16,6 +16,8 @@
 #include "src/Definitions.h"
 #include "src/Heartbeat.h"
 #include "src/CO2.h"
+#include "src/Compass.h"
+
 // Objekt für DHT22
 MyTemperature dht(DHT_PIN, DHTTYPE);
 
@@ -33,6 +35,9 @@ void setup()
   // DELETE
   pinMode(2, OUTPUT);
 
+  // Display starten
+  MyDisplay::initialize_display();
+
   // Potentiometer initialisieren
   MyPotentiometer::intialize_potentiometer();
 
@@ -42,11 +47,11 @@ void setup()
   // Gassensor initialisieren
   GasSensor::intialize_sensor();
 
-  // Display starten
-  MyDisplay::initialize_display();
-
   // Herzschlag sensor
   pinMode(HEARTBEAT_PIN, INPUT);
+
+  // Kompass starten
+  Compass::intialize();
 }
 void loop()
 {
@@ -103,7 +108,7 @@ void loop()
     // Placeholder for compass
   case 5:
   {
-    Serial.println("Compass");
+    Compass::get_readings();
     break;
   }
   }

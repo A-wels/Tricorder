@@ -31,4 +31,9 @@
 #define VERY_HIGH_CO2 1000
 #define TOXIC_GAS 3000
 
+// Kompass:
+
+// Magnetic declination ausgleich: https://ngdc.noaa.gov/geomag/declination.shtml
+#define MAGNETIC_DECLINATION 0.0349
+
 #endif
