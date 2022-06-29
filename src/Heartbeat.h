@@ -3,6 +3,7 @@
 #include "Definitions.h"
 #include "Util.h"
 #include "Display.h"
+#include "LED.h"
 // Adapted from: https://create.arduino.cc/projecthub/Johan_Ha/from-ky-039-to-heart-rate-0abfca
 class Heartbeat
 {

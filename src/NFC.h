@@ -6,9 +6,6 @@
 // Auf Basis von: https://warlord0blog.wordpress.com/2021/10/09/esp32-and-nfc-over-i2c/
 #include <PN532_I2C.h>
 #include <PN532.h>
-#include <NfcAdapter.h>
-
-#include <Arduino.h>
 
 #include "Display.h"
 #include "Util.h"

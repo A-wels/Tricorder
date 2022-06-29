@@ -4,6 +4,9 @@
 QMC5883LCompass Compass::compass;
 void Compass::intialize()
 {
+    MyLED::blink_led(MyLED::colors::RED, 200);
+    MyLED::blink_led(MyLED::colors::YELLOW, 200);
+
     compass.init();
 }
 
@@ -26,8 +29,10 @@ void Compass::get_readings()
         a = compass.getAzimuth();
 
         compass.getDirection(directions, a);
+        MyLED::blink_led(MyLED::colors::GREEN, 200);
 
         MyDisplay::display_compass(a);
+
         Util::wait_interruptable(150);
     }
 }

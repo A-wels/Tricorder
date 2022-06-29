@@ -87,36 +87,54 @@ void MyDisplay::display_CO2(float percent, float ppm)
         text[0] = "Minimaler CO2";
         text[1] = "Anteil";
         text[2] = (String)percent + "%";
+        MyLED::disable_led(MyLED::colors::RED);
+        MyLED::disable_led(MyLED::colors::YELLOW);
+        MyLED::enable_led(MyLED::colors::GREEN);
     }
     if (ppm <= NORMAL_CO2)
     {
         text[0] = "Geringer CO2";
         text[1] = "Anteil";
         text[2] = (String)percent + "%";
+        MyLED::disable_led(MyLED::colors::RED);
+        MyLED::disable_led(MyLED::colors::YELLOW);
+        MyLED::enable_led(MyLED::colors::GREEN);
     }
     else if (ppm <= HIGH_CO2)
     {
         text[0] = "Normaler CO2";
         text[1] = "Anteil";
         text[2] = (String)percent + "%";
+        MyLED::disable_led(MyLED::colors::RED);
+        MyLED::enable_led(MyLED::colors::YELLOW);
+        MyLED::disable_led(MyLED::colors::GREEN);
     }
     else if (ppm <= VERY_HIGH_CO2)
     {
         text[0] = "Hoher CO2";
         text[1] = "Anteil";
         text[2] = (String)percent + "%";
+        MyLED::disable_led(MyLED::colors::RED);
+        MyLED::enable_led(MyLED::colors::YELLOW);
+        MyLED::disable_led(MyLED::colors::GREEN);
     }
     else if (ppm <= TOXIC_GAS)
     {
         text[0] = "Zu hoher C02";
         text[1] = "Anteil erkannt!";
         text[2] = (String)percent + "%";
+        MyLED::disable_led(MyLED::colors::RED);
+        MyLED::disable_led(MyLED::colors::YELLOW);
+        MyLED::enable_led(MyLED::colors::RED);
     }
     else
     {
         text[0] = "Gefaehrliches";
         text[1] = "Gas erkannt!";
         text[2] = "GEFAHR";
+        MyLED::disable_led(MyLED::colors::RED);
+        MyLED::disable_led(MyLED::colors::YELLOW);
+        MyLED::blink_led(MyLED::colors::RED, 200);
     }
 
     display_text(text, 3);

@@ -6,6 +6,7 @@
 #include "Temperature.h"
 #include "Util.h"
 #include "Definitions.h"
+#include "LED.h"
 // Display
 #define OLED_RESET -1
 

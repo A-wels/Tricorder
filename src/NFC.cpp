@@ -73,7 +73,6 @@ void MyNFC::read_nfc()
         {
             connect_nfc();
         }
-        Serial.println("Connected");
 
         if (Util::pot_val != task_at_start)
         {

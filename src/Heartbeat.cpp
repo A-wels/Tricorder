@@ -67,7 +67,7 @@ void Heartbeat::measure_heartbeat()
                 text[0] = "BPM: " + (String)(int)print_value;
                 text[1] = "";
                 MyDisplay::display_text(text, 2);
-                digitalWrite(2, HIGH);
+                MyLED::enable_led(MyLED::colors::RED);
                 third = second;
                 second = first;
             }
@@ -76,7 +76,7 @@ void Heartbeat::measure_heartbeat()
         {
             // Ok, the curve is falling
             rising = false;
-            digitalWrite(2, LOW);
+            MyLED::disable_led(MyLED::colors::RED);
 
             rise_count = 0;
         }

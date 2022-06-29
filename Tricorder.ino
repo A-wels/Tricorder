@@ -2,12 +2,6 @@
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 
-// Libraries for PN532
-// https://github.com/elechouse/PN532
-// Auf Basis von: https://warlord0blog.wordpress.com/2021/10/09/esp32-and-nfc-over-i2c/
-#include <PN532_I2C.h>
-#include <PN532.h>
-#include <NfcAdapter.h>
 #include "src/Display.h"
 #include "src/Ultraschall.h"
 #include "src/Util.h"
@@ -17,6 +11,7 @@
 #include "src/Heartbeat.h"
 #include "src/CO2.h"
 #include "src/Compass.h"
+#include "src/LED.h"
 
 // Objekt für DHT22
 MyTemperature dht(DHT_PIN, DHTTYPE);
@@ -31,10 +26,8 @@ void setup()
   // Serial Monitor
   Serial.begin(115200);
   Serial.println("Starting...");
-
-  // DELETE
-  pinMode(2, OUTPUT);
-
+  // LEDs initialisieren
+  MyLED::initialize();
   // Display starten
   MyDisplay::initialize_display();
 

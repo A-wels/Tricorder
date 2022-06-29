@@ -9,7 +9,7 @@ void Util::wait_interruptable(int duration)
     int pot_at_start = Util::pot_val;
     while (millis() - time_start < duration && Util::pot_val == pot_at_start)
     {
-        delay(100);
+        delay(20);
     }
     return;
 }

@@ -7,6 +7,7 @@
 #include "Util.h"
 #include "Definitions.h"
 #include "NFC.h"
+#include "LED.h"
 
 class Compass
 {
