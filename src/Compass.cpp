@@ -4,9 +4,6 @@
 QMC5883LCompass Compass::compass;
 void Compass::intialize()
 {
-    MyLED::blink_led(MyLED::colors::RED, 200);
-    MyLED::blink_led(MyLED::colors::YELLOW, 200);
-
     compass.init();
 }
 

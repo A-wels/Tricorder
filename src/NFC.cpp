@@ -13,8 +13,7 @@ void MyNFC::connect_nfc()
     uint32_t versiondata = nfc.getFirmwareVersion();
     if (!versiondata)
     {
-        //    String text[] = {"Scanner", " defekt"};
-        //    MyDisplay::display_text(text, 2);
+        Serial.println("NOPE");
         MyNFC::nfc_connected = false;
     }
     else
@@ -31,7 +30,7 @@ void MyNFC::connect_nfc()
         // Set the max number of retry attempts to read from a card
         // This prevents us from waiting forever for a card, which is
         // the default behaviour of the PN532.
-        nfc.setPassiveActivationRetries(40);
+        nfc.setPassiveActivationRetries(0x0a);
 
         // configure board to read RFID tags
         nfc.SAMConfig();
@@ -49,12 +48,6 @@ void MyNFC::read_nfc()
 
     // Wenn Util::pot_val abweicht, so wurde die aktuelle Aufgabe geändert
     int task_at_start = Util::pot_val;
-    boolean success;
-    // Buffer: Hier wird die UID des NFC Chips gespeichert
-    uint8_t uid[] = {0, 0, 0, 0, 0, 0, 0};
-
-    // UID Länge
-    uint8_t uid_length;
 
     // Stelle eine Verbindung her
     String text[] = {"Starte", "Scanner..."};
@@ -68,19 +61,14 @@ void MyNFC::read_nfc()
     MyLED::blink_led(MyLED::colors::RED, 200, 1500);
     MyLED::blink_led(MyLED::colors::YELLOW, 200, 1700);
     MyLED::blink_led(MyLED::colors::GREEN, 200, 1900);
-
+    Util::wait_interruptable(1000);
     while (task_at_start == Util::pot_val)
     {
-        // Stelle eine Verbindung mit dem NFC Modul her
-        while (!MyNFC::nfc_connected)
-        {
-            connect_nfc();
-        }
-
-        if (Util::pot_val != task_at_start)
-        {
-            break;
-        }
+        // // Stelle eine Verbindung mit dem NFC Modul her
+        // while (!MyNFC::nfc_connected && task_at_start == Util::pot_val)
+        // {
+        //     connect_nfc();
+        // }
 
         // Versuche einen NFC Chip auszulesen
         MyDisplay::display_NFC();

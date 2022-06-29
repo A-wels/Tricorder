@@ -32,6 +32,9 @@ void setup()
   // Display starten
   MyDisplay::initialize_display();
 
+  // NFC initialisieren
+  MyNFC::connect_nfc();
+
   // Potentiometer initialisieren
   MyPotentiometer::intialize_potentiometer();
 
@@ -105,10 +108,13 @@ void loop()
     GasSensor::get_ppm();
     break;
   }
-    // Placeholder for compass
+    // Case 5: Compass
   case 5:
   {
     MyLED::disable_all_leds();
+    MyLED::blink_led(MyLED::colors::RED, 400);
+    MyLED::blink_led(MyLED::colors::YELLOW, 400);
+
     Compass::get_readings();
     break;
   }

@@ -71,6 +71,14 @@ void MyDisplay::display_NFC()
     int random_duration = random(50, 300);
     MyLED::blink_led((MyLED::colors)led, random_duration);
 
+    led = random(0, 3);
+    random_duration = random(50, 300);
+    MyLED::blink_led((MyLED::colors)led, random_duration, 1000);
+
+    led = random(0, 3);
+    random_duration = random(50, 300);
+    MyLED::blink_led((MyLED::colors)led, random_duration, 2000);
+
     String text[] = {t};
 
     display_text(text, 1);
