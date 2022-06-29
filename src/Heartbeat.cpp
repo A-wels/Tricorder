@@ -3,6 +3,7 @@
 
 void Heartbeat::measure_heartbeat()
 {
+    MyLED::disable_all_leds();
     // get current task id
     int task_at_start = Util::pot_val;
     // Repeat until a different module was selected

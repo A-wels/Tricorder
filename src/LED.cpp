@@ -11,12 +11,16 @@ void MyLED::initialize()
     digitalWrite(18, LOW);
     digitalWrite(19, LOW);
     Serial.println("BLINK");
-    delay(1000);
-    blink_led(colors::RED, 300);
-    blink_led(colors::YELLOW, 600);
-    blink_led(colors::GREEN, 900);
+    blink_led(colors::RED, 400);
+    blink_led(colors::YELLOW, 800, 4);
+    blink_led(colors::GREEN, 1000, 8);
 }
-
+void MyLED::disable_all_leds()
+{
+    disable_led(RED);
+    disable_led(GREEN);
+    disable_led(YELLOW);
+}
 void MyLED::enable_led(colors LED)
 {
     switch (LED)
@@ -49,8 +53,6 @@ void MyLED::blink_async(void *param)
 {
     blink_struct b = *(blink_struct *)param;
     int pin;
-    Serial.print("Duration: ");
-    Serial.println(b.duration);
     switch (b.color)
     {
     case colors::RED:
@@ -62,27 +64,47 @@ void MyLED::blink_async(void *param)
     case colors::GREEN:
         pin = PIN_GREEN;
     }
+    vTaskDelay(b.delay_ms);
     elapsedMillis since_enable;
-    Serial.print("Enable");
-    Serial.println(b.color);
     digitalWrite(pin, HIGH);
     while (since_enable < b.duration)
     {
         vTaskDelay(10);
     }
     digitalWrite(pin, LOW);
-    Serial.print("Disable");
-    Serial.println(b.color);
     vTaskDelete(NULL);
 }
-void MyLED::blink_led(colors LED, int duration)
+void MyLED::blink_led(colors LED, int duration, int delay_ms)
 {
     blink_struct b;
     b.color = LED;
     b.duration = duration;
+    b.delay_ms = delay_ms;
     disable_led(LED);
 
     TaskHandle_t xHandle = NULL;
     xTaskCreate(MyLED::blink_async, "Blink an LED", 1000, &b, 0, &xHandle);
-    delay(10);
+    delay(4);
+}
+
+void MyLED::blink_distance(float distance)
+{
+    if (distance > 0 && distance <= 10)
+    {
+        disable_led(colors::GREEN);
+        disable_led(colors::YELLOW);
+        blink_led(colors::RED, 300);
+    }
+    else if (distance > 10 && distance <= 50)
+    {
+        disable_led(colors::GREEN);
+        disable_led(colors::RED);
+        enable_led(colors::YELLOW);
+    }
+    else if (distance > 50)
+    {
+        disable_led(colors::YELLOW);
+        disable_led(colors::RED);
+        enable_led(colors::GREEN);
+    }
 }

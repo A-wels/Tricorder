@@ -12,7 +12,6 @@ class GasSensor
 public:
     static void intialize_sensor();
     static void get_ppm();
-    static void get_gas_level(float percent);
     static MQ135 gas_sensor;
 };
 #endif

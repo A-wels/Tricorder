@@ -28,6 +28,7 @@ void setup()
   Serial.println("Starting...");
   // LEDs initialisieren
   MyLED::initialize();
+  delay(500);
   // Display starten
   MyDisplay::initialize_display();
 
@@ -58,10 +59,14 @@ void loop()
     // Miss die Temperatur und zeige sie für 2 Sekunden an
     dht_results dht_measurement = dht.measure_temperature();
     MyDisplay::display_temperature(dht_measurement);
+    MyLED::blink_led(MyLED::colors::YELLOW, 200);
+
     Util::wait_interruptable(2000);
 
     // Miss die Luftfeuchtigkeit und zeige sie für 2 Sekunden an
     MyDisplay::display_humidity(dht_measurement);
+    MyLED::blink_led(MyLED::colors::YELLOW, 200);
+
     Util::wait_interruptable(2000);
     break;
   }
@@ -74,6 +79,7 @@ void loop()
     {
       distance = ultraschall.measure_distance();
     }
+    MyLED::blink_distance(distance);
     MyDisplay::display_distance(distance);
     break;
   }
@@ -95,12 +101,14 @@ void loop()
   // Case 4: CO2 Sensor
   case 4:
   {
+    MyLED::disable_all_leds();
     GasSensor::get_ppm();
     break;
   }
     // Placeholder for compass
   case 5:
   {
+    MyLED::disable_all_leds();
     Compass::get_readings();
     break;
   }

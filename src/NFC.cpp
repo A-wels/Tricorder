@@ -10,20 +10,17 @@ void MyNFC::connect_nfc()
     {
         MyNFC::nfc.begin();
     }
-    // Serial.println("Connecting to nfc");
-    //  Connected, show version
     uint32_t versiondata = nfc.getFirmwareVersion();
     if (!versiondata)
     {
-        //  String text[] = {"Scanner", " defekt"};
-        //  MyDisplay::display_text(text, 2);
-        //       Serial.println("PN53x card not found!");
+        //    String text[] = {"Scanner", " defekt"};
+        //    MyDisplay::display_text(text, 2);
         MyNFC::nfc_connected = false;
     }
     else
     {
+        //  Connected, show version
 
-        // port
         Serial.print("Found chip PN5");
         Serial.println((versiondata >> 24) & 0xFF, HEX);
         Serial.print("Firmware version: ");
@@ -34,7 +31,7 @@ void MyNFC::connect_nfc()
         // Set the max number of retry attempts to read from a card
         // This prevents us from waiting forever for a card, which is
         // the default behaviour of the PN532.
-        nfc.setPassiveActivationRetries(0xFF);
+        nfc.setPassiveActivationRetries(40);
 
         // configure board to read RFID tags
         nfc.SAMConfig();
@@ -63,11 +60,17 @@ void MyNFC::read_nfc()
     String text[] = {"Starte", "Scanner..."};
     MyDisplay::display_text(text, 2);
 
-    Util::wait_interruptable(1000);
+    MyLED::blink_led(MyLED::colors::RED, 200, 300);
+    MyLED::blink_led(MyLED::colors::YELLOW, 200, 600);
+    MyLED::blink_led(MyLED::colors::GREEN, 200, 900);
+    MyLED::blink_led(MyLED::colors::GREEN, 200, 1100);
+    MyLED::blink_led(MyLED::colors::YELLOW, 200, 1300);
+    MyLED::blink_led(MyLED::colors::RED, 200, 1500);
+    MyLED::blink_led(MyLED::colors::YELLOW, 200, 1700);
+    MyLED::blink_led(MyLED::colors::GREEN, 200, 1900);
 
     while (task_at_start == Util::pot_val)
     {
-
         // Stelle eine Verbindung mit dem NFC Modul her
         while (!MyNFC::nfc_connected)
         {
@@ -96,6 +99,7 @@ void MyNFC::read_nfc()
         // Falls erkannt: Datenausgabe
         if (success)
         {
+            MyLED::blink_led(MyLED::colors::GREEN, 4000);
             String text_success[] = {"Scan", "erfolgreich!"};
             MyDisplay::display_text(text_success, 2);
 

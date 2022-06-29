@@ -17,6 +17,16 @@ void MyDisplay::display_temperature(dht_results dht_measurement)
         (String)dht_measurement.temperature + "\xb0" + "C",
     };
     display_text(text, 2);
+    if (dht_measurement.temperature >= 10.f && dht_measurement.temperature <= 22.f)
+    {
+        MyLED::enable_led(MyLED::colors::GREEN);
+        MyLED::disable_led(MyLED::colors::RED);
+    }
+    else
+    {
+        MyLED::enable_led(MyLED::colors::RED);
+        MyLED::disable_led(MyLED::colors::GREEN);
+    }
 }
 
 // Zeige Luftfeuchtigkeit auf dem Bildschirm an
@@ -54,6 +64,13 @@ void MyDisplay::display_NFC()
         count_direction = -1;
     }
     dots = dots + count_direction;
+
+    // Light a random LED
+    int led = random(0, 3);
+
+    int random_duration = random(50, 300);
+    MyLED::blink_led((MyLED::colors)led, random_duration);
+
     String text[] = {t};
 
     display_text(text, 1);
@@ -106,8 +123,8 @@ void MyDisplay::display_CO2(float percent, float ppm)
         text[1] = "Anteil";
         text[2] = (String)percent + "%";
         MyLED::disable_led(MyLED::colors::RED);
-        MyLED::enable_led(MyLED::colors::YELLOW);
-        MyLED::disable_led(MyLED::colors::GREEN);
+        MyLED::disable_led(MyLED::colors::YELLOW);
+        MyLED::enable_led(MyLED::colors::GREEN);
     }
     else if (ppm <= VERY_HIGH_CO2)
     {
@@ -123,7 +140,7 @@ void MyDisplay::display_CO2(float percent, float ppm)
         text[0] = "Zu hoher C02";
         text[1] = "Anteil erkannt!";
         text[2] = (String)percent + "%";
-        MyLED::disable_led(MyLED::colors::RED);
+        MyLED::disable_led(MyLED::colors::GREEN);
         MyLED::disable_led(MyLED::colors::YELLOW);
         MyLED::enable_led(MyLED::colors::RED);
     }
@@ -132,8 +149,8 @@ void MyDisplay::display_CO2(float percent, float ppm)
         text[0] = "Gefaehrliches";
         text[1] = "Gas erkannt!";
         text[2] = "GEFAHR";
-        MyLED::disable_led(MyLED::colors::RED);
         MyLED::disable_led(MyLED::colors::YELLOW);
+        MyLED::disable_led(MyLED::colors::GREEN);
         MyLED::blink_led(MyLED::colors::RED, 200);
     }
 
