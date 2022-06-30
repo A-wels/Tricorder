@@ -15,4 +15,4 @@ This is still very WIP
 - [ ] GY-521 Compass
 - [x] MQ-135 Gas Sensor
 
-![Image of the breadboard with all sensors attached](https://codeberg.org/A-Wels/Tricorder/raw/branch/main/fritzing/breadboard.png "Image of the Breadboard)
+![Image of the breadboard with all sensors attached](https://codeberg.org/A-Wels/Tricorder/raw/branch/main/fritzing/breadboard.png)
