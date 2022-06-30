@@ -14,3 +14,5 @@ This is still very WIP
 - [ ] KY-039 Heartbeat Sensor: Measure pulse
 - [ ] GY-521 Compass
 - [x] MQ-135 Gas Sensor
+
+![Image of the breadboard with all sensors attached](https://codeberg.org/A-Wels/Tricorder/raw/branch/main/fritzing/breadboard.png "Image of the Breadboard)
