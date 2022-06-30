@@ -3,11 +3,7 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
-
-// Ultraschall Pins
-#define TRIG_PIN 14
-#define ECHO_PIN 13
-
+#include "Definitions.h"
 class MyUltraschall
 {
 public:

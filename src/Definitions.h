@@ -15,6 +15,11 @@
 #define PIN_RED 19
 #define PIN_YELLOW 5
 #define PIN_GREEN 18
+
+// Ultraschall Pins
+#define TRIG_PIN 14
+#define ECHO_PIN 13
+
 // DHT22
 #define DHT_PIN 4
 #define DHTTYPE DHT22 // DHT 11
