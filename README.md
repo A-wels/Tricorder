@@ -10,7 +10,9 @@ This is still very WIP
 - [x] Select mode with potentiometer
 - [x] Display values on screen
 - [ ] Send values over wireless network
-- [ ] NFC reader
-- [ ] KY-039 Heartbeat Sensor: Measure pulse
-- [ ] GY-521 Compass
+- [x] NFC reader
+- [x] KY-039 Heartbeat Sensor: Measure pulse
+- [x] GY-521 Compass
 - [x] MQ-135 Gas Sensor
+
+![Image of the breadboard with all sensors attached](https://codeberg.org/A-Wels/Tricorder/raw/branch/main/fritzing/breadboard.png)
