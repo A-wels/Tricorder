@@ -1,7 +1,7 @@
 #include "Util.h"
-// Wartet ungefähr für die angegebene Dauer. Wird vorzeitig abgebrochen, wenn pot_val sich verändert.
 int Util::pot_val = 0;
 
+// Wartet ungefähr für die angegebene Dauer. Wird vorzeitig abgebrochen, wenn pot_val sich verändert.
 void Util::wait_interruptable(int duration)
 {
 

@@ -1,12 +1,12 @@
 // Adapted from: https://create.arduino.cc/projecthub/Johan_Ha/from-ky-039-to-heart-rate-0abfca
 #include "Heartbeat.h"
 
+// Herzschlag messen. Funktioniert aufgrund des Sensors eher weniger.
 void Heartbeat::measure_heartbeat()
 {
     MyLED::disable_all_leds();
     // get current task id
     int task_at_start = Util::pot_val;
-    // Repeat until a different module was selected
 
     float reads[4], sum;
     long int now, ptr;
@@ -23,6 +23,7 @@ void Heartbeat::measure_heartbeat()
     ptr = 0;
     String text[2];
 
+    // Repeat until a different module was selected
     while (task_at_start == Util::pot_val)
     {
         // calculate an average of the sensor

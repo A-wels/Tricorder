@@ -4,6 +4,7 @@ bool MyNFC::nfc_connected = false;
 PN532_I2C MyNFC::pn532i2c(Wire);
 PN532 MyNFC::nfc(pn532i2c);
 
+// Verbindung mit dem NFC Modul aufbauen
 void MyNFC::connect_nfc()
 {
     if (!MyNFC::nfc_connected)
@@ -64,11 +65,6 @@ void MyNFC::read_nfc()
     Util::wait_interruptable(1000);
     while (task_at_start == Util::pot_val)
     {
-        // // Stelle eine Verbindung mit dem NFC Modul her
-        // while (!MyNFC::nfc_connected && task_at_start == Util::pot_val)
-        // {
-        //     connect_nfc();
-        // }
 
         // Versuche einen NFC Chip auszulesen
         MyDisplay::display_NFC();

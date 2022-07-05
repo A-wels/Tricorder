@@ -1,5 +1,6 @@
 #include "LED.h"
 
+// Pins auf Output setzen und blinken
 void MyLED::initialize()
 {
 
@@ -15,12 +16,15 @@ void MyLED::initialize()
     blink_led(colors::YELLOW, 800, 4);
     blink_led(colors::GREEN, 1000, 8);
 }
+// Schaltet alle LEDS aus
 void MyLED::disable_all_leds()
 {
     disable_led(RED);
     disable_led(GREEN);
     disable_led(YELLOW);
 }
+
+// Schaltet die angegebene LED ein
 void MyLED::enable_led(colors LED)
 {
     switch (LED)
@@ -35,6 +39,8 @@ void MyLED::enable_led(colors LED)
         digitalWrite(PIN_GREEN, HIGH);
     }
 }
+
+// Schaltet die angegebene LED aus
 void MyLED::disable_led(colors LED)
 {
     switch (LED)
@@ -49,6 +55,8 @@ void MyLED::disable_led(colors LED)
         digitalWrite(PIN_GREEN, LOW);
     }
 }
+
+// Lässt LEDs blinken. Läuft als separater thread im Hintergrund. Nicht direkt aufrufen
 void MyLED::blink_async(void *param)
 {
     blink_struct b = *(blink_struct *)param;
@@ -74,6 +82,8 @@ void MyLED::blink_async(void *param)
     digitalWrite(pin, LOW);
     vTaskDelete(NULL);
 }
+
+// Lässt eine LED im Hintergrund blinken. Erstellt eine task welche im zweiten Thread läuft
 void MyLED::blink_led(colors LED, int duration, int delay_ms)
 {
     blink_struct b;
@@ -87,6 +97,7 @@ void MyLED::blink_led(colors LED, int duration, int delay_ms)
     delay(4);
 }
 
+// Blinke entsprechend der Distanz, welche vom Ultraschallsensor gemessen wird
 void MyLED::blink_distance(float distance)
 {
     if (distance > 0 && distance <= 10)

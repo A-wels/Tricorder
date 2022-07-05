@@ -6,6 +6,7 @@ MyTemperature::MyTemperature(uint8_t dht_pin = DHT_PIN, uint8_t dht_type = DHTTY
     dht.begin();
 }
 
+// Temperatur auslesen
 dht_results MyTemperature::measure_temperature()
 {
     float temperature = 0;

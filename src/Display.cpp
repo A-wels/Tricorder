@@ -65,7 +65,7 @@ void MyDisplay::display_NFC()
     }
     dots = dots + count_direction;
 
-    // Light a random LED
+    // Zufälliges blinken
     int led = random(0, 3);
 
     int random_duration = random(50, 300);
@@ -84,7 +84,7 @@ void MyDisplay::display_NFC()
     display_text(text, 1);
 }
 
-// Beliebigen text ausgeben
+// Beliebigen text ausgeben. Eingabe als array von Strings, jeder eintrag eine Zeile
 void MyDisplay::display_text(String text[], int lines)
 {
 
@@ -97,6 +97,7 @@ void MyDisplay::display_text(String text[], int lines)
     display.sendBuffer();
 }
 
+// Herzschlag auf dem Bildschirm anzeigen lassen
 void MyDisplay::display_heartbeat(int pulse)
 {
     String text[] = {"BPM: " + (String)pulse};
@@ -104,6 +105,7 @@ void MyDisplay::display_heartbeat(int pulse)
     display_text(text, 1);
 }
 
+// CO2 Wert auf dem Bildschirm anzeigen lassen
 void MyDisplay::display_CO2(float percent, float ppm)
 {
     String text[3];
@@ -165,6 +167,7 @@ void MyDisplay::display_CO2(float percent, float ppm)
     display_text(text, 3);
 }
 
+// NFC Ergebnisse: Erhalte eine UID und matche sie mit einem vordefiniertem Eintrag.
 void MyDisplay::display_NFC_results(uint8_t uid[])
 {
     String text[3];
@@ -191,6 +194,7 @@ void MyDisplay::display_NFC_results(uint8_t uid[])
     }
 }
 
+// Kompass anzeigen: Danke Reddit
 // https://www.reddit.com/r/arduino/comments/9mg45n/arduino_compass_display_or_why_i_relearned_8th/
 void MyDisplay::display_compass(float heading)
 {
